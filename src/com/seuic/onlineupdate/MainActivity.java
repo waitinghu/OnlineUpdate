@@ -54,30 +54,37 @@ public class MainActivity extends Activity implements OnClickListener{
     
     public void checkUpdate() {
         
-        UpdateTask task = new UpdateTask();
+        final UpdateTask task = new UpdateTask();
         task.execute();
+        Dialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle("软件更新")
+                .setMessage("正在检查服务器版本...")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        task.cancel(true);
+                    }
+                })
+                .create();
+        dialog.show();
     }
     
     
     public class UpdateTask extends AsyncTask<Void, Integer, AppUpdateInfo> {
         
+        private boolean isUIStop = false;
+        
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Dialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle("软件更新")
-                    .setMessage("正在检查服务器版本...")
-                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .create();
-            dialog.show();
+        }
+        
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
         }
 
         @Override
         protected AppUpdateInfo doInBackground(Void... params) {
-            
             
             publishProgress(10);
             
